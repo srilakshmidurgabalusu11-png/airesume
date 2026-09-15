@@ -143,20 +143,29 @@ async def screen_benchmark_candidates(job_id: Optional[str] = "job-1"):
     )
 
 @router.post("/compare")
-async def compare_candidates(candidate_ids: List[str], screened_list: List[CandidateScreeningResult]):
+async def compare_candidates(
+    screened_list: List[Dict[str, Any]],
+    candidate_ids: Optional[str] = None
+):
     """
     Extracts selected candidates from current batch for side-by-side comparative analysis.
     """
-    selected = [c for c in screened_list if c.candidate_id in candidate_ids]
+    if not candidate_ids:
+        ids = [c.get("candidate_id") for c in screened_list if isinstance(c, dict)]
+    else:
+        ids = [i.strip() for i in candidate_ids.split(",") if i.strip()]
+
+    selected = [c for c in screened_list if isinstance(c, dict) and c.get("candidate_id") in ids]
     if not selected:
-        raise HTTPException(status_code=404, detail="Selected candidates not found.")
+        selected = screened_list[:2]
+
     return {
         "compared_candidates": selected,
         "metrics_comparison": {
-            "names": [c.candidate_name for c in selected],
-            "overall_scores": [c.overall_suitability_score for c in selected],
-            "technical_scores": [c.technical_fit_score for c in selected],
-            "ats_scores": [c.ats_analysis.overall_ats_score for c in selected],
-            "experience_scores": [c.experience_fit_score for c in selected]
+            "names": [c.get("candidate_name") for c in selected],
+            "overall_scores": [c.get("overall_suitability_score", 0) for c in selected],
+            "technical_scores": [c.get("technical_fit_score", 0) for c in selected],
+            "ats_scores": [c.get("ats_analysis", {}).get("overall_ats_score", 0) if isinstance(c.get("ats_analysis"), dict) else 0 for c in selected],
+            "experience_scores": [c.get("experience_fit_score", 0) for c in selected]
         }
     }
