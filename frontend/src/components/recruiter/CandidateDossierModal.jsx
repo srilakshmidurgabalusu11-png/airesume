@@ -1,0 +1,231 @@
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedCandidateModal } from '../../store/recruiterSlice';
+import { 
+  X, 
+  User, 
+  Award, 
+  CheckCircle2, 
+  AlertTriangle, 
+  Mail, 
+  Phone, 
+  Code, 
+  ExternalLink, 
+  Globe, 
+  Terminal, 
+  BookOpen, 
+  Layers, 
+  Briefcase,
+  Sparkles,
+  HelpCircle
+} from 'lucide-react';
+
+export const CandidateDossierModal = () => {
+  const dispatch = useDispatch();
+  const candidate = useSelector((state) => state.recruiter.selectedCandidateModal);
+
+  if (!candidate) return null;
+
+  const {
+    candidate_name,
+    email,
+    phone,
+    overall_suitability_score,
+    technical_fit_score,
+    experience_fit_score,
+    education_fit_score,
+    semantic_similarity_score,
+    recommendation,
+    executive_summary,
+    strengths = [],
+    concerns = [],
+    ats_analysis,
+    skill_gap_analysis,
+    interview_questions = [],
+    portfolio_intelligence,
+    extracted_data
+  } = candidate;
+
+  const getScoreColor = (score) => {
+    if (score >= 80) return '#10b981';
+    if (score >= 65) return '#6366f1';
+    if (score >= 45) return '#f59e0b';
+    return '#f43f5e';
+  };
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.8)',
+      backdropFilter: 'blur(10px)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 110,
+      padding: '1.5rem'
+    }}>
+      <div 
+        className="glass-panel" 
+        style={{ 
+          width: '100%', 
+          maxWidth: '960px', 
+          maxHeight: '92vh', 
+          overflowY: 'auto', 
+          padding: '2rem',
+          position: 'relative' 
+        }}
+      >
+        {/* Close Button */}
+        <button
+          onClick={() => dispatch(setSelectedCandidateModal(null))}
+          style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+        >
+          <X size={24} />
+        </button>
+
+        {/* Header Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-glass)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem' }}>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 800 }}>{candidate_name}</h2>
+              <span className={`badge ${recommendation === 'Strong Match' ? 'badge-emerald' : recommendation === 'Shortlist' ? 'badge-indigo' : 'badge-amber'}`} style={{ fontSize: '0.85rem' }}>
+                <Award size={14} />
+                {recommendation}
+              </span>
+            </div>
+            
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+              {email && <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Mail size={14} /> {email}</span>}
+              {phone && <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Phone size={14} /> {phone}</span>}
+              {portfolio_intelligence?.github_url && (
+                <a href={portfolio_intelligence.github_url} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-secondary)', display: 'flex', alignItems: 'center', gap: '0.3rem', textDecoration: 'none' }}>
+                  <Code size={14} /> GitHub
+                </a>
+              )}
+              {portfolio_intelligence?.linkedin_url && (
+                <a href={portfolio_intelligence.linkedin_url} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-secondary)', display: 'flex', alignItems: 'center', gap: '0.3rem', textDecoration: 'none' }}>
+                  <ExternalLink size={14} /> LinkedIn
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Suitability Score</div>
+            <div style={{ fontSize: '2.2rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: getScoreColor(overall_suitability_score) }}>
+              {overall_suitability_score}%
+            </div>
+          </div>
+        </div>
+
+        {/* Executive Summary */}
+        <div style={{ background: 'var(--bg-elevated)', padding: '1rem 1.25rem', borderRadius: '10px', border: '1px solid var(--border-glass)', marginBottom: '1.5rem', fontSize: '0.88rem', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
+          <strong style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.3rem' }}>
+            <Sparkles size={16} color="var(--accent-primary)" />
+            AI Executive Evaluation:
+          </strong>
+          {executive_summary}
+        </div>
+
+        {/* Strengths & Concerns Grid */}
+        <div className="grid-two-cols" style={{ gap: '1.25rem', marginBottom: '1.5rem' }}>
+          <div className="glass-card">
+            <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: '#10b981', marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <CheckCircle2 size={16} /> Key Strengths
+            </h4>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+              {strengths.map((s, idx) => (
+                <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem' }}>
+                  <span style={{ color: '#10b981', fontWeight: 700 }}>•</span> {s}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="glass-card">
+            <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f59e0b', marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <AlertTriangle size={16} /> Potential Gaps / Concerns
+            </h4>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+              {concerns.length > 0 ? (
+                concerns.map((c, idx) => (
+                  <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem' }}>
+                    <span style={{ color: '#f59e0b', fontWeight: 700 }}>→</span> {c}
+                  </li>
+                ))
+              ) : (
+                <li style={{ color: '#10b981' }}>No major candidate red flags identified.</li>
+              )}
+            </ul>
+          </div>
+        </div>
+
+        {/* Tailored Interview Questions generated for this candidate */}
+        <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
+          <h4 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <HelpCircle size={18} color="var(--accent-primary)" />
+            Generated Interview Questions & Evaluation Dossier
+          </h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+            {interview_questions.map((q, idx) => (
+              <div key={q.id || idx} style={{ background: 'var(--bg-elevated)', padding: '0.85rem 1rem', borderRadius: '8px', border: '1px solid var(--border-glass)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                  <span className="badge badge-indigo" style={{ fontSize: '0.7rem' }}>{q.category}</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Focus: {q.target_skill_or_project}</span>
+                </div>
+                <div style={{ fontWeight: 600, fontSize: '0.88rem', marginBottom: '0.4rem', color: 'var(--text-primary)' }}>
+                  {q.question}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', background: 'var(--bg-card)', padding: '0.5rem 0.75rem', borderRadius: '6px' }}>
+                  <strong>Evaluator Guide:</strong> {q.evaluator_guide}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Extracted Experience & Education */}
+        {extracted_data && (
+          <div className="grid-two-cols" style={{ gap: '1.25rem' }}>
+            <div className="glass-card">
+              <h4 style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Briefcase size={16} color="var(--accent-secondary)" />
+                Extracted Experience Tenures ({extracted_data.experience?.length || 0})
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                {extracted_data.experience?.map((exp, idx) => (
+                  <div key={idx} style={{ background: 'var(--bg-elevated)', padding: '0.65rem', borderRadius: '6px', fontSize: '0.8rem' }}>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{exp.title}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{exp.company} • {exp.duration}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="glass-card">
+              <h4 style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <BookOpen size={16} color="var(--accent-primary)" />
+                Extracted Academic Background
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                {extracted_data.education?.map((edu, idx) => (
+                  <div key={idx} style={{ background: 'var(--bg-elevated)', padding: '0.65rem', borderRadius: '6px', fontSize: '0.8rem' }}>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{edu.degree}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{edu.institution} {edu.year && `• ${edu.year}`} {edu.gpa && `• ${edu.gpa}`}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+};
+
+export default CandidateDossierModal;
