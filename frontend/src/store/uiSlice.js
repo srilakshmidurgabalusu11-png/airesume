@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   activePortal: 'candidate', // 'candidate' | 'recruiter' | 'admin' | 'analytics'
-  theme: 'dark', // 'dark' | 'light'
+  theme: 'light', // 'light' | 'dark'
   notification: null,
 };
 

@@ -1,6 +1,6 @@
 import uuid
-from typing import List, Optional, Dict, Any
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from typing import List, Optional, Dict, Any, Union
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Body
 from ..models.schemas import (
     CandidateScreeningResult, JobDescription, BatchScreeningResponse
 )
@@ -144,20 +144,27 @@ async def screen_benchmark_candidates(job_id: Optional[str] = "job-1"):
 
 @router.post("/compare")
 async def compare_candidates(
-    screened_list: List[Dict[str, Any]],
+    screened_list: Optional[Any] = Body(default=[]),
     candidate_ids: Optional[str] = None
 ):
     """
     Extracts selected candidates from current batch for side-by-side comparative analysis.
+    Supports both top-level list and wrapped dictionary structures.
     """
+    candidates_data: List[Dict[str, Any]] = []
+    if isinstance(screened_list, list):
+        candidates_data = screened_list
+    elif isinstance(screened_list, dict):
+        candidates_data = screened_list.get("screened_list") or screened_list.get("candidates") or [screened_list]
+    
     if not candidate_ids:
-        ids = [c.get("candidate_id") for c in screened_list if isinstance(c, dict)]
+        ids = [c.get("candidate_id") for c in candidates_data if isinstance(c, dict)]
     else:
         ids = [i.strip() for i in candidate_ids.split(",") if i.strip()]
 
-    selected = [c for c in screened_list if isinstance(c, dict) and c.get("candidate_id") in ids]
-    if not selected:
-        selected = screened_list[:2]
+    selected = [c for c in candidates_data if isinstance(c, dict) and c.get("candidate_id") in ids]
+    if not selected and candidates_data:
+        selected = candidates_data[:2]
 
     return {
         "compared_candidates": selected,

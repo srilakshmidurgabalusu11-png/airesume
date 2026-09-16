@@ -15,7 +15,7 @@ def test_endpoint(name, url, method="GET", data=None, headers=None):
             req.add_header(k, v)
         body = None
         if data is not None:
-            if isinstance(data, dict):
+            if isinstance(data, (dict, list)):
                 body = json.dumps(data).encode("utf-8")
                 req.add_header("Content-Type", "application/json")
             elif isinstance(data, bytes):

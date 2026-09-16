@@ -34,6 +34,17 @@ export const loadBenchmarkCandidates = createAsyncThunk(
   }
 );
 
+export const createJob = createAsyncThunk(
+  'recruiter/createJob',
+  async (jobData, { rejectWithValue }) => {
+    try {
+      return await api.createRecruiterJob(jobData);
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const initialState = {
   jobs: [],
   selectedJobId: 'job-1',
@@ -111,6 +122,10 @@ const recruiterSlice = createSlice({
       .addCase(loadBenchmarkCandidates.rejected, (state, action) => {
         state.isBatchScreening = false;
         state.batchError = action.payload || 'Failed to load benchmarks';
+      })
+      .addCase(createJob.fulfilled, (state, action) => {
+        state.jobs.unshift(action.payload);
+        state.selectedJobId = action.payload.id;
       });
   }
 });

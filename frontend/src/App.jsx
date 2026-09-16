@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setActivePortal } from './store/uiSlice';
 import Header from './components/common/Header';
 import CandidatePortal from './components/candidate/CandidatePortal';
 import RecruiterPortal from './components/recruiter/RecruiterPortal';
-import AnalyticsPortal from './components/analytics/AnalyticsPortal';
-import AdminPortal from './components/admin/AdminPortal';
 import { Sparkles, GraduationCap } from 'lucide-react';
 
 export const App = () => {
+  const dispatch = useDispatch();
   const activePortal = useSelector((state) => state.ui.activePortal);
   const theme = useSelector((state) => state.ui.theme);
 
@@ -15,20 +15,25 @@ export const App = () => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
+  // Ensure activePortal is always valid
+  useEffect(() => {
+    if (activePortal !== 'candidate' && activePortal !== 'recruiter') {
+      dispatch(setActivePortal('candidate'));
+    }
+  }, [activePortal, dispatch]);
+
   return (
-    <div className="app-container">
-      {/* Top Universal Header */}
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+      {/* Top Universal Header (Full Width Edge-to-Edge) */}
       <Header />
 
       {/* Main Content Area */}
-      <main style={{ minHeight: 'calc(100vh - 240px)' }}>
-        {activePortal === 'candidate' && <CandidatePortal />}
-        {activePortal === 'recruiter' && <RecruiterPortal />}
-        {activePortal === 'analytics' && <AnalyticsPortal />}
-        {activePortal === 'admin' && <AdminPortal />}
-      </main>
+      <div className="app-container" style={{ paddingTop: '1.5rem' }}>
+        <main style={{ minHeight: 'calc(100vh - 240px)' }}>
+          {activePortal === 'recruiter' ? <RecruiterPortal /> : <CandidatePortal />}
+        </main>
 
-      {/* Academic Capstone Footer */}
+      {/* Application Footer */}
       <footer style={{ 
         marginTop: '3rem', 
         borderTop: '1px solid var(--border-glass)', 
@@ -39,19 +44,17 @@ export const App = () => {
         lineHeight: 1.6
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.4rem', color: 'var(--text-primary)', fontWeight: 600 }}>
-          <GraduationCap size={16} color="var(--accent-primary)" />
-          <span>CSE Master's Final Year Capstone Project</span>
-        </div>
-        <div>
-          <strong>AI-Powered Resume Screening and Candidate Intelligence System</strong>
+          <Sparkles size={16} color="var(--accent-primary)" />
+          <span>AI-Powered Resume Screening and Candidate Intelligence System</span>
         </div>
         <div style={{ fontSize: '0.75rem', marginTop: '0.2rem' }}>
-          Project Members: B. Sri Lakshmi Durga (233B1A0411) • M. Karunya Durga Lakshmi (233B1A0461) • V. BVS Durgaprasad (233B1A0438) • Y. Tataji (233B1A0404) • M. MSS Prasad (233B1A0450)
+          Project Authors: B. Sri Lakshmi Durga • M. Karunya Durga Lakshmi • V. BVS Durgaprasad • Y. Tataji • M. MSS Prasad
         </div>
         <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
           Tech Stack: Python 3.13 (FastAPI, scikit-learn, PyPDF) • Google Gemini LLM • React 19 • Redux Toolkit
         </div>
       </footer>
+      </div>
     </div>
   );
 };

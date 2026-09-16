@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../services/api';
+import confetti from 'canvas-confetti';
 
 export const fetchSampleJobs = createAsyncThunk(
   'candidate/fetchSampleJobs',
@@ -98,6 +99,17 @@ const candidateSlice = createSlice({
       .addCase(screenCandidateResume.fulfilled, (state, action) => {
         state.isScreening = false;
         state.activeCandidate = action.payload;
+        if (action.payload && (action.payload.overall_suitability_score >= 80 || action.payload.recommendation === 'Strong Match')) {
+          try {
+            confetti({
+              particleCount: 80,
+              spread: 70,
+              origin: { y: 0.6 }
+            });
+          } catch (e) {
+            // gracefully ignore if canvas context unavailable
+          }
+        }
       })
       .addCase(screenCandidateResume.rejected, (state, action) => {
         state.isScreening = false;

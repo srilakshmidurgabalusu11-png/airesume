@@ -58,7 +58,7 @@ export const AnalyticsPortal = () => {
           </div>
           <div className="badge badge-indigo" style={{ padding: '0.4rem 0.85rem' }}>
             <Activity size={14} />
-            CSE Master's Research Telemetry
+            Advanced Research Telemetry
           </div>
         </div>
       </div>

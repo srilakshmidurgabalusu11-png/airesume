@@ -106,9 +106,10 @@ class NLPEngine:
 
         norm_req = {NLPEngine.normalize_skill(s) for s in required_skills}
         norm_pref = {NLPEngine.normalize_skill(s) for s in preferred_skills}
+        norm_soft = norm_req.union(norm_pref)
 
         matched_hard = [s for s in res_hard if s in norm_req or s in norm_pref or any(s in x for x in norm_req)]
-        matched_soft = [s for s in res_soft if s in norm_req or s in norm_pref or any(s in x for x in norm_soft)]
+        matched_soft = [s for s in res_soft if s in norm_soft or any(s in x for x in norm_soft)]
 
         # If no explicit matches from strict set, find overlap with all extracted skills
         missing_critical = [s for s in norm_req if not any(NLPEngine.normalize_skill(r) == s or s in r for r in res_all_skills)]

@@ -181,10 +181,10 @@ export const AdminPortal = () => {
                 value={activeModel}
                 onChange={(e) => dispatch(setActiveModel(e.target.value))}
               >
-                <option value="gemini-2.5-flash" style={{ background: '#1e293b' }}>gemini-2.5-flash (Recommended: Fast, Multimodal, 1M Context)</option>
-                <option value="gemini-3.7-flash" style={{ background: '#1e293b' }}>gemini-3.7-flash (High Performance & Agentic Reasoning)</option>
-                <option value="gemini-3.5-flash-lite" style={{ background: '#1e293b' }}>gemini-3.5-flash-lite (Lowest Latency High-Throughput)</option>
-                <option value="gemini-2.5-pro" style={{ background: '#1e293b' }}>gemini-2.5-pro (Complex Research & Coding)</option>
+                <option value="gemini-2.5-flash">gemini-2.5-flash (Recommended: Fast, Multimodal, 1M Context)</option>
+                <option value="gemini-3.7-flash">gemini-3.7-flash (High Performance & Agentic Reasoning)</option>
+                <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite (Lowest Latency High-Throughput)</option>
+                <option value="gemini-2.5-pro">gemini-2.5-pro (Complex Research & Coding)</option>
               </select>
               <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
                 Conforms to latest Google GenAI SDK standards.

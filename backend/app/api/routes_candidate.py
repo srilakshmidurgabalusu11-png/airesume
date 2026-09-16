@@ -61,17 +61,38 @@ def run_candidate_screening_pipeline(
         missing_skills=skill_gaps.missing_critical_skills
     )
 
+    exp_fit = gemini_eval.get("experience_fit_score", 70)
+    edu_fit = gemini_eval.get("education_fit_score", 80)
+    
+    # Hybrid Matching Formula: 0.40 * SkillMatch + 0.30 * SemanticSim + 0.20 * ExpFit + 0.10 * EduFit
+    calculated_suitability = int(round(
+        (0.40 * skill_gaps.skill_match_percentage) +
+        (0.30 * tfidf_sim) +
+        (0.20 * exp_fit) +
+        (0.10 * edu_fit)
+    ))
+    overall_suitability = min(98, max(25, calculated_suitability))
+
+    if overall_suitability >= 75:
+        final_recommendation = "Strong Match"
+    elif overall_suitability >= 60:
+        final_recommendation = "Shortlist"
+    elif overall_suitability >= 45:
+        final_recommendation = "Consider"
+    else:
+        final_recommendation = "Not Recommended"
+
     return CandidateScreeningResult(
         candidate_id=candidate_id,
         candidate_name=resume_data.name,
         email=resume_data.email,
         phone=resume_data.phone,
-        overall_suitability_score=gemini_eval.get("overall_suitability_score", 75),
-        technical_fit_score=gemini_eval.get("technical_fit_score", 75),
-        experience_fit_score=gemini_eval.get("experience_fit_score", 70),
-        education_fit_score=gemini_eval.get("education_fit_score", 80),
+        overall_suitability_score=overall_suitability,
+        technical_fit_score=gemini_eval.get("technical_fit_score", int(min(98, max(30, skill_gaps.skill_match_percentage * 0.9 + 10)))),
+        experience_fit_score=exp_fit,
+        education_fit_score=edu_fit,
         semantic_similarity_score=int(tfidf_sim),
-        recommendation=gemini_eval.get("recommendation", "Shortlist"),
+        recommendation=final_recommendation,
         executive_summary=gemini_eval.get("executive_summary", "Candidate displays solid technical foundational readiness."),
         strengths=gemini_eval.get("strengths", []),
         concerns=gemini_eval.get("concerns", []),
@@ -108,14 +129,17 @@ async def screen_resume(
     # Determine Job Description
     target_jd = None
     if custom_job_description and custom_job_description.strip():
-        req_skills = [s.strip().lower() for s in custom_required_skills.split(",")] if custom_required_skills else []
+        req_skills = [s.strip().lower() for s in custom_required_skills.split(",") if s.strip()] if custom_required_skills else []
+        if not req_skills:
+            extracted_hard, _ = NLPEngine.extract_skills(custom_job_description)
+            req_skills = extracted_hard
         target_jd = JobDescription(
             id="custom-job",
-            title=custom_job_title or "Target Technical Role",
+            title=custom_job_title.strip() if custom_job_title else "Target Technical Role",
             company="Target Enterprise",
             required_skills=req_skills,
             preferred_skills=[],
-            full_text=custom_job_description
+            full_text=custom_job_description.strip()
         )
     else:
         # Match with sample jobs

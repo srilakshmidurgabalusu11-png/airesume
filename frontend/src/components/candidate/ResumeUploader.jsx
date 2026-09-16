@@ -3,9 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { 
   screenCandidateResume, 
   fetchSampleJobs, 
-  setSelectedJobId,
-  setUseCustomJob,
-  setCustomJob
+  setSelectedJobId
 } from '../../store/candidateSlice';
 import { 
   UploadCloud, 
@@ -15,12 +13,15 @@ import {
   Sparkles, 
   Layers, 
   Edit3,
-  Flame
+  Flame,
+  Briefcase,
+  Check,
+  RotateCcw
 } from 'lucide-react';
 
 export const ResumeUploader = () => {
   const dispatch = useDispatch();
-  const { sampleJobs, selectedJobId, isScreening, screeningError, useCustomJob, customJob } = useSelector(
+  const { sampleJobs, selectedJobId, isScreening, screeningError } = useSelector(
     (state) => state.candidate
   );
 
@@ -28,6 +29,105 @@ export const ResumeUploader = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [resumeText, setResumeText] = useState('');
   const [dragActive, setDragActive] = useState(false);
+
+  // Manual Job Name and Description State
+  const [jobTitle, setJobTitle] = useState('Senior Full Stack AI Engineer');
+  const [jobDescription, setJobDescription] = useState(
+`We are seeking a Senior Full Stack AI Engineer to design and deploy state-of-the-art candidate screening architectures, interactive React/Redux user interfaces, and FastAPI microservices.
+
+Key Responsibilities:
+- Design and integrate Google Gemini LLM reasoning and semantic matching pipelines.
+- Build high-performance frontend interfaces using React, Redux Toolkit, and modern CSS.
+- Optimize backend REST APIs, document parsers, and caching layers for sub-200ms latency.
+- Collaborate with recruiting leaders to establish automated ATS evaluation rubrics.
+
+Required Qualifications:
+- Proficiency in Python, FastAPI, React, JavaScript/TypeScript, and SQL.
+- Practical experience with NLP, TF-IDF vector similarity, and LLM prompt engineering.
+- Solid understanding of relational database schemas, REST APIs, and containerized deployments.`
+  );
+  const [jobSkills, setJobSkills] = useState('python, fastapi, react, redux, gemini, nlp, tf-idf, sql');
+
+  const jobTemplates = [
+    {
+      label: 'Full Stack AI Engineer',
+      title: 'Senior Full Stack AI Engineer',
+      skills: 'python, fastapi, react, redux, gemini, nlp, tf-idf, sql',
+      description: `We are seeking a Senior Full Stack AI Engineer to design and deploy state-of-the-art candidate screening architectures, interactive React/Redux user interfaces, and FastAPI microservices.
+
+Key Responsibilities:
+- Design and integrate Google Gemini LLM reasoning and semantic matching pipelines.
+- Build high-performance frontend interfaces using React, Redux Toolkit, and modern CSS.
+- Optimize backend REST APIs, document parsers, and caching layers for sub-200ms latency.
+- Collaborate with recruiting leaders to establish automated ATS evaluation rubrics.
+
+Required Qualifications:
+- Proficiency in Python, FastAPI, React, JavaScript/TypeScript, and SQL.
+- Practical experience with NLP, TF-IDF vector similarity, and LLM prompt engineering.
+- Solid understanding of relational database schemas, REST APIs, and containerized deployments.`
+    },
+    {
+      label: 'NLP Research Scientist',
+      title: 'Lead NLP & Machine Learning Research Scientist',
+      skills: 'python, pytorch, transformers, nlp, gemini, huggingface, llm, bert',
+      description: `Join our AI Research division to build semantic evaluation models, LLM grounding mechanisms, and custom NLP entity extractors.
+
+Key Responsibilities:
+- Lead R&D on document parsing, tokenization, semantic similarity metrics, and hallucination reduction.
+- Benchmark and fine-tune open-source and proprietary foundation models for HR tech domains.
+- Publish and document technical research findings and evaluation rubrics.
+
+Required Qualifications:
+- Strong mathematical grounding in Machine Learning, Deep Learning, and NLP architectures.
+- Expertise with PyTorch, HuggingFace, Transformers, and LLM evaluation frameworks.`
+    },
+    {
+      label: 'Cloud DevOps & MLOps',
+      title: 'Cloud Infrastructure & MLOps Platform Engineer',
+      skills: 'docker, kubernetes, aws, gcp, terraform, ci/cd, linux, monitoring',
+      description: `Looking for a Senior DevOps & MLOps Platform Engineer to automate CI/CD delivery pipelines, manage containerized microservices, and optimize cloud infrastructure.
+
+Key Responsibilities:
+- Design scalable Docker and Kubernetes deployment topologies for FastAPI and Vite services.
+- Establish automated testing, telemetry monitoring, and zero-downtime rolling releases.
+- Manage secure environment secrets, IAM roles, and cloud resource provisioning.
+
+Required Qualifications:
+- Proven experience with Docker, Kubernetes, Linux, Terraform, and CI/CD pipelines.
+- Familiarity with monitoring stacks (Prometheus, Grafana) and cloud providers (AWS, GCP).`
+    }
+  ];
+
+  const handleSelectTemplate = (tpl) => {
+    setJobTitle(tpl.title);
+    setJobDescription(tpl.description);
+    setJobSkills(tpl.skills);
+  };
+
+  const handleClearJob = () => {
+    setJobTitle('');
+    setJobDescription('');
+    setJobSkills('');
+  };
+
+  const handleJdFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target.result;
+      if (typeof content === 'string') {
+        const cleanContent = content.replace(/[^\x20-\x7E\t\r\n]/g, ' ').trim();
+        setJobDescription(cleanContent);
+        if (!jobTitle) {
+          const guessedTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+          setJobTitle(guessedTitle);
+        }
+      }
+    };
+    reader.readAsText(file);
+  };
 
   useEffect(() => {
     dispatch(fetchSampleJobs());
@@ -124,18 +224,19 @@ Diploma in Information Technology | 2023`);
       return;
     }
 
-    if (useCustomJob) {
-      formData.append('custom_job_title', customJob.title || 'Custom Role');
-      formData.append('custom_job_description', customJob.description || '');
-      formData.append('custom_required_skills', customJob.skills || '');
-    } else {
-      formData.append('job_id', selectedJobId);
+    if (!jobTitle.trim() || !jobDescription.trim()) {
+      alert('Please enter both the Job Title and Job Description to screen the resume against.');
+      return;
+    }
+
+    formData.append('custom_job_title', jobTitle.trim());
+    formData.append('custom_job_description', jobDescription.trim());
+    if (jobSkills.trim()) {
+      formData.append('custom_required_skills', jobSkills.trim());
     }
 
     dispatch(screenCandidateResume(formData));
   };
-
-  const selectedJob = sampleJobs.find((j) => j.id === selectedJobId) || sampleJobs[0];
 
   return (
     <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
@@ -146,17 +247,17 @@ Diploma in Information Technology | 2023`);
             Step 1: Input Resume & Target Role
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-            Upload your resume document (PDF, DOCX, TXT) or paste raw text to initiate ATS and Gemini LLM screening.
+            Upload or paste your resume and define your target job name & description to initiate ATS and Gemini LLM screening.
           </p>
         </div>
 
-        {/* 1-Click Master's Benchmark Loader */}
+        {/* 1-Click Profile Benchmark Loaders */}
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button 
             onClick={() => handleLoadSample('senior')}
             className="btn-secondary"
             style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
-            title="Load high-scoring Master's thesis candidate profile"
+            title="Load high-scoring candidate profile"
           >
             <Sparkles size={14} color="#10b981" />
             Load Strong Profile
@@ -218,7 +319,7 @@ Diploma in Information Technology | 2023`);
               }}
             >
               <Edit3 size={16} />
-              Paste Raw Text
+              Paste Plain Text
             </button>
           </div>
 
@@ -236,42 +337,42 @@ Diploma in Information Technology | 2023`);
                 textAlign: 'center',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                minHeight: '190px',
+                minHeight: '260px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center'
               }}
-              onClick={() => document.getElementById('resume-file-input').click()}
+              onClick={() => document.getElementById('candidate-resume-file').click()}
             >
               <input
-                id="resume-file-input"
+                id="candidate-resume-file"
                 type="file"
                 accept=".pdf,.docx,.doc,.txt"
                 onChange={handleFileChange}
                 style={{ display: 'none' }}
               />
               <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.75rem' }}>
-                <UploadCloud size={24} color="var(--accent-primary)" />
+                <FileText size={24} color="var(--accent-primary)" />
               </div>
-
+              
               {selectedFile ? (
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem', justifyContent: 'center' }}>
-                    <FileText size={16} color="var(--accent-emerald)" />
+                  <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.4rem', justifyContent: 'center' }}>
+                    <CheckCircle size={16} />
                     {selectedFile.name}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                    {(selectedFile.size / 1024).toFixed(1)} KB • Click or drop another to replace
+                    {(selectedFile.size / 1024).toFixed(1)} KB • Click or drop to replace
                   </div>
                 </div>
               ) : (
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: '0.92rem', marginBottom: '0.25rem' }}>
-                    Drag & Drop your resume here, or <span style={{ color: 'var(--accent-primary)' }}>Browse</span>
+                  <div style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: '0.25rem' }}>
+                    Click to browse or drag & drop resume file
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Supported formats: PDF, DOCX, TXT (Max 15MB)
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Supports PDF, DOCX, DOC, and TXT (Max 15MB)
                   </div>
                 </div>
               )}
@@ -279,90 +380,143 @@ Diploma in Information Technology | 2023`);
           ) : (
             <textarea
               className="glass-textarea"
-              placeholder="Paste complete resume text here (Education, Experience, Technical Skills, Projects)..."
+              placeholder="Paste raw candidate resume text here (include sections like Experience, Education, Technical Skills)..."
               value={resumeText}
               onChange={(e) => setResumeText(e.target.value)}
-              style={{ minHeight: '190px', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}
+              style={{ minHeight: '260px', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}
             />
           )}
         </div>
 
-        {/* Right: Target Job Description Selector */}
+        {/* Right: Target Job Name & Description (Manual Upload / Text) */}
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                Select Target Job Requisition:
-              </label>
-              <button
-                onClick={() => dispatch(setUseCustomJob(!useCustomJob))}
-                style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 600 }}
-              >
-                {useCustomJob ? '← Choose from Preset Jobs' : '+ Enter Custom Job Description'}
-              </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem', flexWrap: 'wrap', gap: '0.4rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Briefcase size={16} color="var(--accent-primary)" />
+                <label style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Target Job Specification:
+                </label>
+                <span className="badge badge-indigo" style={{ fontSize: '0.68rem', padding: '0.1rem 0.4rem' }}>
+                  Manual Text / Upload
+                </span>
+              </div>
+
+              {/* Upload JD File Button */}
+              <div>
+                <input
+                  id="jd-file-input"
+                  type="file"
+                  accept=".txt,.md,.pdf,.docx,.doc"
+                  onChange={handleJdFileUpload}
+                  style={{ display: 'none' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('jd-file-input').click()}
+                  className="btn-secondary"
+                  style={{ fontSize: '0.74rem', padding: '0.25rem 0.55rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                  title="Upload Job Description document (.txt, .md, .docx, .pdf)"
+                >
+                  <UploadCloud size={13} />
+                  Upload JD File
+                </button>
+              </div>
             </div>
 
-            {!useCustomJob ? (
-              <div>
-                <select
-                  className="glass-select"
-                  value={selectedJobId}
-                  onChange={(e) => dispatch(setSelectedJobId(e.target.value))}
-                  style={{ marginBottom: '0.75rem', fontWeight: 600 }}
-                >
-                  {sampleJobs.map((job) => (
-                    <option key={job.id} value={job.id} style={{ background: '#1e293b' }}>
-                      {job.title} — {job.company} ({job.experience_required})
-                    </option>
-                  ))}
-                </select>
+            {/* Manual Job Title / Name Input */}
+            <div style={{ marginBottom: '0.65rem' }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                Job Title / Name:
+              </label>
+              <input
+                type="text"
+                placeholder="Enter Target Job Title (e.g. Senior Full Stack AI Engineer)"
+                className="glass-input"
+                value={jobTitle}
+                onChange={(e) => setJobTitle(e.target.value)}
+                style={{ width: '100%', fontWeight: 600 }}
+              />
+            </div>
 
-                {selectedJob && (
-                  <div className="glass-card" style={{ padding: '0.85rem', maxHeight: '135px', overflowY: 'auto' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                      <span style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--accent-secondary)' }}>
-                        {selectedJob.title}
-                      </span>
-                      <span className="badge badge-indigo">{selectedJob.experience_required}</span>
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginBottom: '0.4rem' }}>
-                      {selectedJob.required_skills.map((skill, idx) => (
-                        <span key={idx} className="badge badge-cyan" style={{ fontSize: '0.68rem', padding: '0.15rem 0.45rem' }}>
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      {selectedJob.full_text.slice(0, 160)}...
-                    </p>
-                  </div>
-                )}
+            {/* Manual Job Description Textarea */}
+            <div style={{ marginBottom: '0.65rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                  Job Description & Responsibilities:
+                </label>
+                <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                  {jobDescription.length} characters
+                </span>
               </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <input
-                  type="text"
-                  placeholder="Target Job Title (e.g. Senior Machine Learning Engineer)"
-                  className="glass-input"
-                  value={customJob.title}
-                  onChange={(e) => dispatch(setCustomJob({ title: e.target.value }))}
-                />
-                <textarea
-                  placeholder="Paste Job Description requirements and responsibilities..."
-                  className="glass-textarea"
-                  value={customJob.description}
-                  onChange={(e) => dispatch(setCustomJob({ description: e.target.value }))}
-                  style={{ minHeight: '85px', fontSize: '0.82rem' }}
-                />
-                <input
-                  type="text"
-                  placeholder="Key required skills comma-separated (e.g. python, fastapi, react, docker)"
-                  className="glass-input"
-                  value={customJob.skills}
-                  onChange={(e) => dispatch(setCustomJob({ skills: e.target.value }))}
-                />
-              </div>
-            )}
+              <textarea
+                placeholder="Paste or manually type complete Job Description requirements, qualifications, and role responsibilities here..."
+                className="glass-textarea"
+                value={jobDescription}
+                onChange={(e) => setJobDescription(e.target.value)}
+                style={{ width: '100%', minHeight: '125px', fontSize: '0.82rem', lineHeight: 1.45 }}
+              />
+            </div>
+
+            {/* Optional Required Skills */}
+            <div style={{ marginBottom: '0.65rem' }}>
+              <label style={{ display: 'block', fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                Key Required Skills (Optional — leave blank to auto-extract with NLP):
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Python, FastAPI, React, Redux, Gemini, NLP, SQL"
+                className="glass-input"
+                value={jobSkills}
+                onChange={(e) => setJobSkills(e.target.value)}
+                style={{ width: '100%', fontSize: '0.8rem' }}
+              />
+            </div>
+
+            {/* Quick-Fill Preset Template Chips */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap', marginTop: '0.4rem' }}>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                Templates:
+              </span>
+              {jobTemplates.map((tpl, tIdx) => (
+                <button
+                  key={tIdx}
+                  type="button"
+                  onClick={() => handleSelectTemplate(tpl)}
+                  style={{
+                    fontSize: '0.7rem',
+                    padding: '0.15rem 0.45rem',
+                    background: '#f4f4f5',
+                    border: '1px solid #18181b',
+                    borderRadius: '4px',
+                    color: '#09090b',
+                    cursor: 'pointer',
+                    fontWeight: 500
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = '#e4e4e7'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = '#f4f4f5'}
+                >
+                  {tpl.label}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={handleClearJob}
+                style={{
+                  fontSize: '0.7rem',
+                  padding: '0.15rem 0.45rem',
+                  background: 'transparent',
+                  border: '1px dashed #d4d4d8',
+                  borderRadius: '4px',
+                  color: '#dc2626',
+                  cursor: 'pointer',
+                  fontWeight: 500
+                }}
+                title="Clear Job Name and Description"
+              >
+                Clear
+              </button>
+            </div>
           </div>
 
           {/* Action Trigger */}

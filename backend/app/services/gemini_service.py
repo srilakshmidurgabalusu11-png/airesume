@@ -143,10 +143,25 @@ Provide JSON with:
   ]
 }}
 """
-                response = self.client.models.generate_content(
-                    model=self.model_name,
-                    contents=f"{system_prompt}\n\n{user_prompt}"
-                )
+                candidate_models = list(dict.fromkeys([self.model_name, "gemini-3.6-flash", "gemini-3.7-flash", "gemini-flash-latest"]))
+                response = None
+                successful_model = self.model_name
+                last_err = None
+                for m in candidate_models:
+                    try:
+                        response = self.client.models.generate_content(
+                            model=m,
+                            contents=f"{system_prompt}\n\n{user_prompt}"
+                        )
+                        successful_model = m
+                        self.model_name = m
+                        break
+                    except Exception as me:
+                        last_err = me
+                        continue
+                
+                if response is None:
+                    raise last_err or Exception("All Gemini models failed")
                 
                 raw_response = response.text.strip()
                 # Clean any accidental markdown fence formatting
@@ -165,7 +180,7 @@ Provide JSON with:
                     prompt_tokens=prompt_tokens,
                     completion_tokens=completion_tokens,
                     status="SUCCESS",
-                    details=f"Evaluated {resume_data.name} using {self.model_name}"
+                    details=f"Evaluated {resume_data.name} using {successful_model}"
                 )
                 return data
 
@@ -203,8 +218,8 @@ Provide JSON with:
         edu_score = 92 if any("master" in e.degree.lower() or "m.tech" in e.degree.lower() or "ph.d" in e.degree.lower() for e in resume_data.education) else 82
 
         overall_score = int(round(
-            (skill_score * 0.45) +
-            (semantic_score * 0.25) +
+            (skill_score * 0.40) +
+            (semantic_score * 0.30) +
             (exp_score * 0.20) +
             (edu_score * 0.10)
         ))
@@ -339,10 +354,19 @@ Provide JSON with:
                     f"Provide your advice and end with 2 suggested follow-up prompts."
                 )
                 
-                response = self.client.models.generate_content(
-                    model=self.model_name,
-                    contents=prompt
-                )
+                candidate_models = list(dict.fromkeys([self.model_name, "gemini-3.6-flash", "gemini-3.7-flash", "gemini-flash-latest"]))
+                response = None
+                for m in candidate_models:
+                    try:
+                        response = self.client.models.generate_content(
+                            model=m,
+                            contents=prompt
+                        )
+                        break
+                    except Exception:
+                        continue
+                if response is None:
+                    raise Exception("All Gemini chat models failed")
                 return {
                     "reply": response.text.strip(),
                     "suggested_prompts": [

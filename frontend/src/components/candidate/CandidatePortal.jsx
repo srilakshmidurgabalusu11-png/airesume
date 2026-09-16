@@ -30,16 +30,18 @@ export const CandidatePortal = () => {
       )}
 
       {/* Input Section */}
-      <ResumeUploader />
+      <div id="step-1">
+        <ResumeUploader />
+      </div>
 
       {/* Results Section when evaluated */}
       {activeCandidate && (
         <>
-          <ATSScoreCard candidate={activeCandidate} />
-          <SkillGapRadar skillGaps={activeCandidate.skill_gap_analysis} />
-          <BulletRewriter improvements={activeCandidate.resume_improvements} />
-          <MockInterview questions={activeCandidate.interview_questions} />
-          <AICareerCoach candidate={activeCandidate} />
+          <div id="scorecard"><ATSScoreCard candidate={activeCandidate} /></div>
+          <div id="skill-gaps"><SkillGapRadar skillGaps={activeCandidate.skill_gap_analysis} /></div>
+          <div id="bullet-rewriter"><BulletRewriter improvements={activeCandidate.resume_improvements} /></div>
+          <div id="mock-interview"><MockInterview questions={activeCandidate.interview_questions} /></div>
+          <div id="career-coach"><AICareerCoach candidate={activeCandidate} /></div>
         </>
       )}
     </div>

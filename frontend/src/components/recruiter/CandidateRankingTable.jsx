@@ -169,10 +169,10 @@ export const CandidateRankingTable = ({ onOpenCompareModal }) => {
               onChange={(e) => dispatch(setSortBy(e.target.value))}
               style={{ width: 'auto', padding: '0.45rem 0.75rem', fontSize: '0.8rem' }}
             >
-              <option value="overall" style={{ background: '#1e293b' }}>Overall Score</option>
-              <option value="technical" style={{ background: '#1e293b' }}>Technical Fit</option>
-              <option value="ats" style={{ background: '#1e293b' }}>ATS Compatibility</option>
-              <option value="experience" style={{ background: '#1e293b' }}>Experience Depth</option>
+              <option value="overall">Overall Score</option>
+              <option value="technical">Technical Fit</option>
+              <option value="ats">ATS Compatibility</option>
+              <option value="experience">Experience Depth</option>
             </select>
           </div>
 
@@ -184,11 +184,11 @@ export const CandidateRankingTable = ({ onOpenCompareModal }) => {
               onChange={(e) => dispatch(setStatusFilter(e.target.value))}
               style={{ width: 'auto', padding: '0.45rem 0.75rem', fontSize: '0.8rem' }}
             >
-              <option value="ALL" style={{ background: '#1e293b' }}>All Recommendations</option>
-              <option value="Strong Match" style={{ background: '#1e293b' }}>Strong Match</option>
-              <option value="Shortlist" style={{ background: '#1e293b' }}>Shortlist</option>
-              <option value="Consider" style={{ background: '#1e293b' }}>Consider</option>
-              <option value="Not Recommended" style={{ background: '#1e293b' }}>Not Recommended</option>
+              <option value="ALL">All Recommendations</option>
+              <option value="Strong Match">Strong Match</option>
+              <option value="Shortlist">Shortlist</option>
+              <option value="Consider">Consider</option>
+              <option value="Not Recommended">Not Recommended</option>
             </select>
           </div>
 

@@ -13,7 +13,8 @@ import {
   Mail, 
   Phone, 
   Sparkles, 
-  Award 
+  Award,
+  Download
 } from 'lucide-react';
 
 export const ATSScoreCard = ({ candidate }) => {
@@ -35,6 +36,41 @@ export const ATSScoreCard = ({ candidate }) => {
     ats_analysis,
     portfolio_intelligence
   } = candidate;
+
+  const exportDiagnosticReport = () => {
+    const lines = [
+      `# AI Candidate Diagnostic & ATS Scorecard Report`,
+      `Candidate Name: ${candidate_name}`,
+      `Email: ${email || 'N/A'} | Phone: ${phone || 'N/A'}`,
+      `Overall Suitability Score: ${overall_suitability_score}% (${recommendation})`,
+      `ATS Compatibility Score: ${ats_analysis?.overall_ats_score || 0}%`,
+      `Technical Fit: ${technical_fit_score}% | Experience Fit: ${experience_fit_score}% | Education Fit: ${education_fit_score}%`,
+      `Semantic Cosine Similarity: ${semantic_similarity_score}%`,
+      `Project Authenticity Score: ${portfolio_intelligence?.project_authenticity_score || 75}%`,
+      ``,
+      `## Executive Evaluation`,
+      `${executive_summary}`,
+      ``,
+      `## Key Candidate Strengths`,
+      ...(strengths.map(s => `- ${s}`)),
+      ``,
+      `## ATS Recommendations & Actionable Fixes`,
+      ...((ats_analysis?.actionable_fixes || []).map(f => `- ${f}`)),
+      ``,
+      `## Portfolio & Online Presence Insights`,
+      ...((portfolio_intelligence?.insights || []).map(i => `- ${i}`)),
+      ``,
+      `Report generated on: ${new Date().toLocaleString()}`
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${candidate_name.replace(/\s+/g, '_')}_ATS_Diagnostic_Report.md`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // Score color helper
   const getScoreColor = (score) => {
@@ -64,12 +100,21 @@ export const ATSScoreCard = ({ candidate }) => {
       {/* Candidate Dossier Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-glass)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{candidate_name}</h2>
             <span className={`badge ${getScoreBadge(recommendation)}`} style={{ fontSize: '0.82rem', padding: '0.3rem 0.75rem' }}>
               <Award size={14} />
               {recommendation}
             </span>
+            <button
+              onClick={exportDiagnosticReport}
+              className="btn-secondary"
+              style={{ fontSize: '0.75rem', padding: '0.28rem 0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+              title="Download ATS Diagnostic & Career Report as Markdown"
+            >
+              <Download size={13} />
+              Export Report
+            </button>
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
@@ -135,7 +180,7 @@ export const ATSScoreCard = ({ candidate }) => {
         <div className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <div className="radial-progress-wrapper" style={{ width: '100px', height: '100px' }}>
             <svg width="100" height="100" className="radial-progress-circle">
-              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="9" />
+              <circle cx="50" cy="50" r="42" fill="none" stroke="var(--gauge-track)" strokeWidth="9" />
               <circle
                 cx="50"
                 cy="50"
@@ -168,7 +213,7 @@ export const ATSScoreCard = ({ candidate }) => {
         <div className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <div className="radial-progress-wrapper" style={{ width: '100px', height: '100px' }}>
             <svg width="100" height="100" className="radial-progress-circle">
-              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="9" />
+              <circle cx="50" cy="50" r="42" fill="none" stroke="var(--gauge-track)" strokeWidth="9" />
               <circle
                 cx="50"
                 cy="50"
@@ -218,6 +263,69 @@ export const ATSScoreCard = ({ candidate }) => {
         </div>
 
       </div>
+
+      {/* Portfolio & GitHub Open-Source Intelligence */}
+      {portfolio_intelligence && (
+        <div className="glass-card" style={{ marginBottom: '1.5rem', background: 'var(--bg-card)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Code size={18} color="var(--accent-secondary)" />
+              <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Portfolio & GitHub Open-Source Intelligence
+              </h3>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Project Authenticity:</span>
+              <span className="badge badge-indigo" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem' }}>
+                {portfolio_intelligence.project_authenticity_score}%
+              </span>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', marginBottom: '0.85rem' }}>
+            <div style={{ background: 'var(--bg-elevated)', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid var(--border-glass)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Repository Artifacts</div>
+              <div style={{ fontWeight: 600, fontSize: '0.82rem', color: portfolio_intelligence.has_github ? '#10b981' : '#f59e0b', marginTop: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                {portfolio_intelligence.has_github ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
+                {portfolio_intelligence.has_github ? 'Verified GitHub Attached' : 'No GitHub Link in Header'}
+              </div>
+            </div>
+
+            <div style={{ background: 'var(--bg-elevated)', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid var(--border-glass)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Live Production Deployments</div>
+              <div style={{ fontWeight: 600, fontSize: '0.82rem', color: portfolio_intelligence.has_portfolio ? '#10b981' : 'var(--accent-secondary)', marginTop: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <Globe size={14} />
+                {portfolio_intelligence.has_portfolio ? 'Custom Portfolio / Demo Active' : 'Standard Web Presence'}
+              </div>
+            </div>
+
+            <div style={{ background: 'var(--bg-elevated)', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid var(--border-glass)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Recruiter Verification</div>
+              <div style={{ fontWeight: 600, fontSize: '0.82rem', color: portfolio_intelligence.has_linkedin ? '#10b981' : '#f43f5e', marginTop: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                {portfolio_intelligence.has_linkedin ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
+                {portfolio_intelligence.has_linkedin ? 'LinkedIn Profile Connected' : 'Missing LinkedIn Reference'}
+              </div>
+            </div>
+          </div>
+
+          {portfolio_intelligence.insights && portfolio_intelligence.insights.length > 0 && (
+            <div style={{ background: 'var(--bg-elevated)', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid var(--border-glass)' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent-secondary)', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Sparkles size={13} />
+                Intelligence & Evidence Signals:
+              </div>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                {portfolio_intelligence.insights.map((insight, iIdx) => (
+                  <li key={iIdx} style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'flex-start', gap: '0.45rem', lineHeight: 1.4 }}>
+                    <span style={{ color: 'var(--accent-primary)', fontWeight: 700 }}>•</span>
+                    <span>{insight}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Section Health Check Row */}
       <div style={{ marginBottom: '1.5rem' }}>

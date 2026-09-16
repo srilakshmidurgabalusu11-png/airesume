@@ -80,10 +80,19 @@ The system provides ATS compatibility analysis, skill-gap identification, resume
 - Python 3.10+ (tested on Python 3.13)
 - Node.js LTS (v20+ or v22+)
 
-### One-Click Launch (Windows)
+### One-Click Launch
+
+#### Windows:
 Double-click:
 ```bat
 run_project.bat
+```
+
+#### macOS / Linux:
+Make executable and run:
+```bash
+chmod +x run_project.sh
+./run_project.sh
 ```
 
 ### Manual Launch
@@ -92,7 +101,11 @@ run_project.bat
 ```bash
 cd backend
 python -m venv venv
+# Windows:
 venv\Scripts\activate
+# macOS / Linux:
+source venv/bin/activate
+
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
@@ -107,11 +120,26 @@ npm run dev
 ```
 Frontend Web Portal will be available at: `http://localhost:5173`
 
+### Automated API Verification Suite
+Run the end-to-end automated test suite:
+```bash
+cd backend
+python test_api_suite.py
+```
+
 ---
 
 ## 5. Demonstration Guide for Project Viva / Presentation
 1. Open `http://localhost:5173`.
-2. **Candidate Portal**: Click **"Load Strong Profile"** or **"Load Gap Profile"** and click **"Analyze Resume with Gemini & ATS Engine"**. Observe the ATS scorecards, skill gap breakdowns, STAR rewrites, and mock interview questions.
-3. **Recruiter Portal**: Click **"Run Master's Benchmark Evaluation"** to screen all 6 preloaded candidates. View the Leaderboard ranking, check boxes to compare candidates side-by-side, and click "Dossier" to view candidate profiles.
-4. **Analytics Portal**: Review the recruitment funnel and score distribution histograms.
-5. **Admin Portal**: Inspect LLM latency, token counts, configure Gemini API keys, and review audit logs.
+2. **Candidate Portal**:
+   - Click **"Load Strong Profile"** or **"Load Gap Profile"**.
+   - Click **"Analyze Resume with Gemini & ATS Engine"**.
+   - Observe the dual radial gauges, ATS scorecards, section health audit, and the **Portfolio & GitHub Open-Source Intelligence** panel with authenticity score, deployment detection, and evidence signals.
+   - Test the STAR-method bullet rewrites, tailored mock interview rubric, interactive AI Career Coach, and click **"Export Report"** to download the diagnostic report.
+3. **Recruiter Portal**:
+   - Click **"+ Post New Requisition"** to define a custom job opening, or choose a preset requisition.
+   - Click **"Run Master's Benchmark Evaluation"** to screen all 6 preloaded candidates.
+   - View the Leaderboard ranking (#1, #2, #3), select candidates to compare side-by-side in the Comparison Matrix, and inspect individual candidates via **"Dossier"** with full evaluation rubrics and **"Export Dossier"** download.
+4. **Analytics Portal**: Review the recruitment funnel, score distribution histograms, top market skills, and prevalent skill gaps.
+5. **Admin Portal**: Inspect live LLM latency, token counts, configure Gemini API keys, select active Gemini models, and review audit trails.
+
