@@ -8,7 +8,6 @@ import {
   Sun, 
   Moon, 
   Search, 
-  Bell, 
   Activity, 
   ChevronDown, 
   X, 
@@ -22,7 +21,6 @@ import {
   Menu
 } from 'lucide-react';
 import CommandPaletteModal from './CommandPaletteModal';
-import NotificationsPopover from './NotificationsPopover';
 import UserProfileMenu from './UserProfileMenu';
 
 export const HeaderNavigationBase = ({
@@ -38,9 +36,9 @@ export const HeaderNavigationBase = ({
   
   // Interactive UI Popover and Modal states
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [showTeamModal, setShowTeamModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSubItem, setActiveSubItem] = useState(0);
 
   // Global Keyboard Shortcut: ⌘K or Ctrl+K to trigger Command Palette
@@ -171,7 +169,7 @@ export const HeaderNavigationBase = ({
               <span style={{ fontSize: '0.98rem', fontWeight: 800, color: '#09090b', letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
                 {brandName}
               </span>
-              <span style={{
+              <span className="desktop-only" style={{
                 fontSize: '0.66rem',
                 fontWeight: 700,
                 textTransform: 'uppercase',
@@ -186,7 +184,7 @@ export const HeaderNavigationBase = ({
               </span>
             </div>
 
-            <div style={{ width: '1px', height: '22px', background: '#e4e4e7', margin: '0 0.35rem' }} />
+            <div className="desktop-only" style={{ width: '1px', height: '22px', background: '#e4e4e7', margin: '0 0.35rem' }} />
 
             {/* Segmented Portal Switcher */}
             <nav 
@@ -199,7 +197,7 @@ export const HeaderNavigationBase = ({
                 borderRadius: '8px',
                 border: '1px solid #e4e4e7'
               }}
-              className="desktop-nav"
+              className="desktop-nav desktop-only"
             >
               {items.map((item) => {
                 const isActive = (item.id && item.id === currentActiveId) || (item.href && item.href === activeUrl);
@@ -230,59 +228,8 @@ export const HeaderNavigationBase = ({
                 );
               })}
             </nav>
-          </div>
-
-          {/* Right Zone: Notifications + Theme Toggle + User Profile */}
+          </div>          {/* Right Zone: Theme Toggle + User Profile */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0 }}>
-            {/* Notifications Center Trigger */}
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => {
-                  setNotificationsOpen(!notificationsOpen);
-                  setUserMenuOpen(false);
-                }}
-                style={{
-                  position: 'relative',
-                  width: '34px',
-                  height: '34px',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: notificationsOpen ? '#f4f4f5' : '#ffffff',
-                  border: '1px solid #18181b',
-                  color: '#09090b',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease'
-                }}
-                title="System Telemetry & Alerts"
-              >
-                <Bell size={15} />
-                <span style={{
-                  position: 'absolute',
-                  top: '-3px',
-                  right: '-3px',
-                  width: '14px',
-                  height: '14px',
-                  borderRadius: '50%',
-                  background: '#09090b',
-                  color: '#ffffff',
-                  fontSize: '0.62rem',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '1.5px solid #ffffff'
-                }}>
-                  3
-                </span>
-              </button>
-              <NotificationsPopover 
-                isOpen={notificationsOpen} 
-                onClose={() => setNotificationsOpen(false)} 
-              />
-            </div>
-
             {/* Theme Toggle Button */}
             <button
               onClick={() => dispatch(toggleTheme())}
@@ -307,10 +254,7 @@ export const HeaderNavigationBase = ({
             {/* Enterprise User Profile Dropdown */}
             <div style={{ position: 'relative' }}>
               <button
-                onClick={() => {
-                  setUserMenuOpen(!userMenuOpen);
-                  setNotificationsOpen(false);
-                }}
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -340,7 +284,7 @@ export const HeaderNavigationBase = ({
                 >
                   SL
                 </div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#09090b' }}>
+                <span className="desktop-only" style={{ fontSize: '0.75rem', fontWeight: 600, color: '#09090b' }}>
                   Sri Lakshmi
                 </span>
                 <ChevronDown size={12} color="#71717a" style={{ transform: userMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
@@ -352,12 +296,114 @@ export const HeaderNavigationBase = ({
                 onOpenCommandPalette={() => setCommandPaletteOpen(true)}
               />
             </div>
+
+            {/* Mobile Navigation Drawer Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="mobile-only"
+              style={{
+                width: '34px',
+                height: '34px',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: mobileMenuOpen ? '#09090b' : '#ffffff',
+                border: '1px solid #18181b',
+                color: mobileMenuOpen ? '#ffffff' : '#09090b',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              title="Toggle Navigation Menu"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X size={17} /> : <Menu size={17} />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Drawer (Dropdown when hamburger clicked) */}
+        {mobileMenuOpen && (
+          <div 
+            className="mobile-only"
+            style={{
+              width: '100%',
+              background: '#ffffff',
+              borderBottom: '1px solid #18181b',
+              padding: '0.85rem 1rem',
+              boxSizing: 'border-box',
+              animation: 'fadeIn 0.2s ease-out'
+            }}
+          >
+            <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: '#71717a', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+              Select Application Portal
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginBottom: '0.85rem' }}>
+              {items.map((item) => {
+                const isActive = (item.id && item.id === currentActiveId) || (item.href && item.href === activeUrl);
+                const ItemIcon = item.icon;
+                return (
+                  <button
+                    key={item.id || item.label}
+                    onClick={() => {
+                      handleItemClick(item);
+                      setMobileMenuOpen(false);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.65rem',
+                      padding: '0.65rem 0.85rem',
+                      borderRadius: '8px',
+                      border: isActive ? '1px solid #18181b' : '1px solid #e4e4e7',
+                      fontSize: '0.86rem',
+                      fontWeight: isActive ? 700 : 500,
+                      cursor: 'pointer',
+                      background: isActive ? '#09090b' : '#fafafa',
+                      color: isActive ? '#ffffff' : '#09090b',
+                      textAlign: 'left',
+                      width: '100%'
+                    }}
+                  >
+                    {ItemIcon && <ItemIcon size={16} />}
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Mobile Quick Actions */}
+            <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid #e4e4e7', paddingTop: '0.75rem' }}>
+              <button
+                onClick={() => {
+                  setCommandPaletteOpen(true);
+                  setMobileMenuOpen(false);
+                }}
+                className="btn-secondary"
+                style={{ flex: 1, fontSize: '0.75rem', padding: '0.45rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}
+              >
+                <Command size={13} />
+                ⌘K Search
+              </button>
+              <button
+                onClick={() => {
+                  setShowTeamModal(true);
+                  setMobileMenuOpen(false);
+                }}
+                className="btn-secondary"
+                style={{ flex: 1, fontSize: '0.75rem', padding: '0.45rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}
+              >
+                <Users size={13} />
+                Project Team
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Tier 2: Secondary Contextual Action Bar (Height ~42px) */}
         {subItems.length > 0 && (
           <div 
+            className="touch-scroll-container hide-scrollbar"
             style={{ 
               width: '100%',
               display: 'flex', 
@@ -369,7 +415,8 @@ export const HeaderNavigationBase = ({
               overflowX: 'auto',
               whiteSpace: 'nowrap',
               gap: '1rem',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              WebkitOverflowScrolling: 'touch'
             }}
           >
             {/* Context Navigation Tabs */}
@@ -443,7 +490,7 @@ export const HeaderNavigationBase = ({
 
       {/* Project Team & Architecture Modal */}
       {showTeamModal && (
-        <div style={{
+        <div className="modal-overlay" style={{
           position: 'fixed',
           top: 0,
           left: 0,
@@ -457,7 +504,7 @@ export const HeaderNavigationBase = ({
           zIndex: 150,
           padding: '1.5rem'
         }}>
-          <div className="glass-panel" style={{ width: '100%', maxWidth: '540px', padding: '1.75rem', position: 'relative', background: '#ffffff', border: '1px solid #18181b' }}>
+          <div className="glass-panel modal-content" style={{ width: '100%', maxWidth: '540px', padding: '1.75rem', position: 'relative', background: '#ffffff', border: '1px solid #18181b', maxHeight: '92vh', overflowY: 'auto' }}>
             <button 
               onClick={() => setShowTeamModal(false)}
               style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}

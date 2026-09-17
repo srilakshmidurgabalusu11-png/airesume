@@ -177,12 +177,13 @@ export const AICareerCoach = ({ candidate }) => {
       <div style={{ display: 'flex', gap: '0.65rem' }}>
         <input
           type="text"
-          placeholder="Ask AI Career Coach (e.g. 'How can I rewrite my lead project bullet to highlight FastAPI?')..."
+          placeholder="Ask AI Career Coach (e.g. 'How can I improve my project bullets?')..."
           className="glass-input"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyDown={handleKeyPress}
           disabled={isChatLoading}
+          style={{ minWidth: 0 }}
         />
         <button
           onClick={() => handleSend()}

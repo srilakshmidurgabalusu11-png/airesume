@@ -13,7 +13,6 @@ import {
   Sparkles, 
   Layers, 
   Edit3,
-  Flame,
   Briefcase,
   Check,
   RotateCcw
@@ -158,60 +157,6 @@ Required Qualifications:
     }
   };
 
-  const handleLoadSample = (sampleType = 'senior') => {
-    // Load a rich sample resume for instant demonstration
-    setUploadMode('text');
-    if (sampleType === 'senior') {
-      setResumeText(`B. Sri Lakshmi Durga
-srilakshmi.durga@email.com | +91 98480 12345 | https://github.com/srilakshmidurga | https://linkedin.com/in/srilakshmidurga | https://srilakshmi-portfolio.vercel.app
-
-PROFESSIONAL SUMMARY
-Senior Full Stack AI Engineer and Master of Technology candidate in Computer Science & Engineering with 3+ years of experience designing AI-driven web architectures, FastAPI microservices, and reactive user interfaces with React and Redux Toolkit. Proven track record integrating Large Language Models and semantic matching algorithms into production recruiting pipelines.
-
-TECHNICAL SKILLS
-- Programming Languages: Python, JavaScript, TypeScript, SQL, Bash
-- Frameworks & Libraries: FastAPI, React, Redux Toolkit, Next.js, Flask, PyTorch, scikit-learn, Pandas, NumPy, TailwindCSS
-- AI & NLP: Large Language Models (Gemini, GPT), Natural Language Processing, TF-IDF, RAG, Prompt Engineering, Cosine Similarity
-- Databases & Cloud: PostgreSQL, MongoDB, Redis, Docker, AWS (S3, EC2), Git, CI/CD, REST APIs
-
-PROFESSIONAL EXPERIENCE
-Senior AI Application Developer | Cognizant NextGen Labs | 2023 – Present
-- Architected and deployed an AI candidate screening engine using Python FastAPI and Google Gemini API, processing 15,000+ applicant profiles with a 42% reduction in initial recruitment screening cycle time.
-- Engineered responsive recruiter and candidate dashboards using React, Redux Toolkit, and TailwindCSS, achieving 99.4% client satisfaction and sub-120ms rendering times.
-- Implemented hybrid semantic matching algorithms combining TF-IDF vector embeddings with cosine similarity, improving candidate suitability precision by 28%.
-- Designed and optimized PostgreSQL relational database schemas and Redis caching, cutting median API response latency by 35% from 420ms to 270ms.
-
-AI Systems Intern | TCS Research & Innovations | 2022 – 2023
-- Developed automated resume information extraction pipelines using PyPDF and regex entity recognizers, achieving 94.6% parsing accuracy across diverse resume formats.
-- Collaborated with senior engineers to implement automated ATS compatibility scoring algorithms, reducing unparseable applications by 50%.
-
-EDUCATION
-Master of Technology (M.Tech) in Computer Science & Engineering
-JNTUK Affiliated Engineering College | 2023 – 2025 | CGPA: 9.2 / 10.0
-
-KEY PROJECTS
-AI-Powered Resume Screening & Candidate Intelligence System
-- Designed end-to-end multi-role recruitment intelligence platform with React, Redux, FastAPI, and Gemini 2.5 Flash.
-- Implemented multi-file batch screening, ATS parsability diagnostic scorecards, STAR-method bullet rewriting, and automated interview question generation.`);
-    } else {
-      setResumeText(`Rohan Sharma
-rohan.sharma@email.com | New Delhi
-
-Objective:
-Looking for an entry level software role.
-
-Skills:
-HTML, CSS, basic PHP, WordPress.
-
-Experience:
-Freelance Website Designer (2023)
-- Made 3 simple websites using WordPress templates for local businesses.
-
-Education:
-Diploma in Information Technology | 2023`);
-    }
-  };
-
   const handleStartScreening = () => {
     const formData = new FormData();
 
@@ -249,28 +194,6 @@ Diploma in Information Technology | 2023`);
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
             Upload or paste your resume and define your target job name & description to initiate ATS and Gemini LLM screening.
           </p>
-        </div>
-
-        {/* 1-Click Profile Benchmark Loaders */}
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button 
-            onClick={() => handleLoadSample('senior')}
-            className="btn-secondary"
-            style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
-            title="Load high-scoring candidate profile"
-          >
-            <Sparkles size={14} color="#10b981" />
-            Load Strong Profile
-          </button>
-          <button 
-            onClick={() => handleLoadSample('junior')}
-            className="btn-secondary"
-            style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
-            title="Load borderline candidate profile to observe skill gaps"
-          >
-            <Flame size={14} color="#f43f5e" />
-            Load Gap Profile
-          </button>
         </div>
       </div>
 

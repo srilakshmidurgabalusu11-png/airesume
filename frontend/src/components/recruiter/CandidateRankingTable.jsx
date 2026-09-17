@@ -116,7 +116,7 @@ export const CandidateRankingTable = ({ onOpenCompareModal }) => {
       
       {/* Batch Analytics Bar */}
       {analytics && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.85rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
           <div className="glass-card" style={{ padding: '0.85rem 1rem' }}>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total Screened</div>
             <div style={{ fontSize: '1.4rem', fontWeight: 800, fontFamily: 'var(--font-mono)' }}>{analytics.total_screened}</div>
@@ -219,7 +219,7 @@ export const CandidateRankingTable = ({ onOpenCompareModal }) => {
       </div>
 
       {/* Candidate Leaderboard Table */}
-      <div style={{ overflowX: 'auto' }}>
+      <div className="touch-scroll-container" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--border-glass)', color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>

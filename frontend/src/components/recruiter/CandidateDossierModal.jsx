@@ -91,7 +91,7 @@ export const CandidateDossierModal = () => {
   };
 
   return (
-    <div style={{
+    <div className="modal-overlay" style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -106,7 +106,7 @@ export const CandidateDossierModal = () => {
       padding: '1.5rem'
     }}>
       <div 
-        className="glass-panel" 
+        className="glass-panel modal-content" 
         style={{ 
           width: '100%', 
           maxWidth: '960px', 

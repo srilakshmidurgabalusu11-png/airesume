@@ -58,7 +58,7 @@ export const SkillGapRadar = ({ skillGaps }) => {
       </div>
 
       {/* Skills Classification Matrix */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '1rem' }}>
         
         {/* 1. Matched Hard Skills */}
         <div className="glass-card">

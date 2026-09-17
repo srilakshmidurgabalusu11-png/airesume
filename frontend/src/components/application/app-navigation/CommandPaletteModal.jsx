@@ -241,6 +241,7 @@ export const CommandPaletteModal = ({ isOpen, onClose, onOpenTeamModal }) => {
 
   return (
     <div 
+      className="modal-overlay"
       style={{
         position: 'fixed',
         inset: 0,
@@ -250,12 +251,13 @@ export const CommandPaletteModal = ({ isOpen, onClose, onOpenTeamModal }) => {
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'center',
-        paddingTop: '10vh',
+        padding: '10vh 1rem 1rem 1rem',
         animation: 'fadeIn 0.15s ease-out'
       }}
       onClick={onClose}
     >
       <div 
+        className="modal-content"
         style={{
           width: '100%',
           maxWidth: '640px',

@@ -288,7 +288,7 @@ export const BatchUploader = () => {
 
       {/* Post New Job Requisition Modal */}
       {showNewJobModal && (
-        <div style={{
+        <div className="modal-overlay" style={{
           position: 'fixed',
           top: 0,
           left: 0,
@@ -302,7 +302,7 @@ export const BatchUploader = () => {
           zIndex: 120,
           padding: '1.5rem'
         }}>
-          <div className="glass-panel" style={{ width: '100%', maxWidth: '640px', maxHeight: '90vh', overflowY: 'auto', padding: '1.75rem', position: 'relative' }}>
+          <div className="glass-panel modal-content" style={{ width: '100%', maxWidth: '640px', maxHeight: '90vh', overflowY: 'auto', padding: '1.75rem', position: 'relative' }}>
             <button
               onClick={() => setShowNewJobModal(false)}
               style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}

@@ -52,7 +52,7 @@ export const BulletRewriter = ({ improvements = [] }) => {
             </div>
 
             {/* Before vs After Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.25fr', gap: '1rem', marginBottom: '0.85rem' }}>
+            <div className="grid-responsive-two" style={{ marginBottom: '0.85rem' }}>
               
               {/* Original Weak Bullet */}
               <div style={{ background: 'rgba(244, 63, 94, 0.05)', border: '1px solid rgba(244, 63, 94, 0.2)', padding: '0.85rem', borderRadius: '8px' }}>

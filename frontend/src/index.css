@@ -328,18 +328,118 @@ select option {
 .app-container {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 1.5rem 2rem 3rem 2rem;
+  padding: 1.5rem 1.5rem 3rem 1.5rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    padding: 1rem 0.85rem 2.5rem 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-container {
+    padding: 0.75rem 0.6rem 2rem 0.6rem;
+  }
 }
 
 .grid-two-cols {
   display: grid;
   grid-template-columns: 1fr 1.35fr;
-  gap: 1.75rem;
+  gap: 1.5rem;
 }
 
 @media (max-width: 1024px) {
   .grid-two-cols {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+.grid-responsive-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .grid-responsive-two {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+.grid-kpi-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 1024px) {
+  .grid-kpi-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-kpi-cards {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+}
+
+/* Visibility Utilities */
+.desktop-only {
+  display: block;
+}
+.mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: block !important;
+  }
+  .mobile-flex {
+    display: flex !important;
+  }
+}
+
+/* Touch Scrolling */
+.touch-scroll-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Responsive Panel and Modal Adjustments */
+@media (max-width: 640px) {
+  .glass-panel {
+    padding: 1.1rem !important;
+    border-radius: var(--radius-md);
+  }
+  .glass-card {
+    padding: 0.9rem !important;
+  }
+  .modal-overlay {
+    padding: 0.5rem !important;
+  }
+  .modal-content {
+    padding: 1.1rem !important;
+    max-height: 95vh !important;
   }
 }
 

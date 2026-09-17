@@ -164,7 +164,7 @@ export const ATSScoreCard = ({ candidate }) => {
         </div>
 
         {/* Executive Summary Callout */}
-        <div style={{ maxWidth: '420px', background: 'var(--bg-elevated)', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid var(--border-glass)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+        <div style={{ width: '100%', maxWidth: '420px', background: 'var(--bg-elevated)', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid var(--border-glass)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
           <div style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
             <Sparkles size={14} color="var(--accent-primary)" />
             AI Executive Evaluation:
@@ -174,7 +174,7 @@ export const ATSScoreCard = ({ candidate }) => {
       </div>
 
       {/* Dual Gauges: Overall Suitability + ATS Parsability */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '1.75rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '1.25rem', marginBottom: '1.75rem' }}>
         
         {/* Gauge 1: Candidate Suitability Score */}
         <div className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>

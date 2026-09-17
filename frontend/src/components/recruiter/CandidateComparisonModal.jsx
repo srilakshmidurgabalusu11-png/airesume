@@ -31,7 +31,7 @@ export const CandidateComparisonModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div style={{
+    <div className="modal-overlay" style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -46,7 +46,7 @@ export const CandidateComparisonModal = ({ isOpen, onClose }) => {
       padding: '1.5rem'
     }}>
       <div 
-        className="glass-panel" 
+        className="glass-panel modal-content" 
         style={{ 
           width: '100%', 
           maxWidth: '1080px', 
@@ -78,13 +78,17 @@ export const CandidateComparisonModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Comparative Columns Grid */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: `repeat(${Math.max(1, comparedCandidates.length)}, minmax(220px, 1fr))`, 
-          gap: '1.25rem',
-          overflowX: 'auto',
-          paddingBottom: '1rem'
-        }}>
+        <div 
+          className="touch-scroll-container hide-scrollbar"
+          style={{ 
+            display: 'grid', 
+            gridTemplateColumns: `repeat(${Math.max(1, comparedCandidates.length)}, minmax(260px, 1fr))`, 
+            gap: '1.25rem',
+            overflowX: 'auto',
+            paddingBottom: '1rem',
+            WebkitOverflowScrolling: 'touch'
+          }}
+        >
           {comparedCandidates.map((cand, idx) => (
             <div key={cand.candidate_id} className="glass-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               
